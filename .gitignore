@@ -4,3 +4,4 @@ node_modules
 *.lock
 dist
 release
+.DS_Store
