@@ -31,6 +31,7 @@ const Provider: FC = ({ children }) => {
 		initialContext.socket.connect();
 		initialContext.socket.on("connected", (id: string) => {
 			setId(id);
+			initialContext.socket.off("connected");
 		});
 	}, []);
 	return (

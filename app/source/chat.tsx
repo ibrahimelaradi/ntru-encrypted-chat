@@ -16,7 +16,7 @@ const Chat: FC<{ id: string; room: string }> = ({ id, room }) => {
 	);
 	useEvent(
 		"message",
-		async (id: string, message: string) => {
+		(id: string, message: string) => {
 			setMessages([...messages, { id, message: decrypt(message, useChars) }]);
 		},
 		[messages]
@@ -24,9 +24,10 @@ const Chat: FC<{ id: string; room: string }> = ({ id, room }) => {
 
 	const sendMessage = useEmitter("message");
 
-	async function sendMessageAsync(message: string) {
-		sendMessage(room, encrypt(message, useChars));
+	function sendMessageAsync() {
+		sendMessage(room, encrypt(input, useChars));
 	}
+
 	return (
 		<>
 			<Box borderStyle="round" flexGrow={1} flexDirection="column">
@@ -56,8 +57,8 @@ const Chat: FC<{ id: string; room: string }> = ({ id, room }) => {
 					<TextInput
 						value={input}
 						onChange={setInput}
-						onSubmit={(value) => {
-							sendMessageAsync(value);
+						onSubmit={() => {
+							sendMessageAsync();
 							setInput("");
 						}}
 					/>

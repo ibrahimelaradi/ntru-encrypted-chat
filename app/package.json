@@ -7,23 +7,29 @@
 		"node": ">=10"
 	},
 	"scripts": {
-		"build": "tsc",
-		"start": "npm run build && dist/cli.js",
-		"pretest": "npm run build",
+		"build": "SET NODE_ENV=production tsc --build",
+		"build-dev": "SET NODE_ENV=development tsc --build",
+		"start-dev": "yarn build-dev && node dist/cli.js",
+		"start-prod": "yarn build && node dist/cli.js",
+		"pretest": "yarn build",
 		"test": "xo && ava"
 	},
 	"files": [
 		"dist/cli.js"
 	],
 	"dependencies": {
+		"dotenv": "^8.2.0",
+		"fs": "^0.0.1-security",
 		"ink": "^3.0.8",
 		"ink-select-input": "^4.2.0",
 		"ink-spinner": "^4.0.1",
 		"ink-text-input": "^4.0.1",
+		"js-yaml": "^3.14.1",
 		"meow": "^8.0.0",
 		"node-fetch": "^2.6.1",
 		"ntru": "../ntru",
 		"ora": "^5.1.0",
+		"path": "^0.12.7",
 		"react": "^17.0.1",
 		"socket.io-client": "^3.0.4"
 	},
@@ -31,6 +37,7 @@
 		"@ava/typescript": "^1.1.1",
 		"@sindresorhus/tsconfig": "^0.8.0",
 		"@types/ink-text-input": "^2.0.1",
+		"@types/js-yaml": "^3.12.5",
 		"@types/node-fetch": "^2.5.7",
 		"@types/react": "^17.0.0",
 		"ava": "^3.14.0",

@@ -18,22 +18,16 @@ app.get("/rooms", (req, res) => {
 
 io.on("connection", (socket: Socket) => {
   console.log("Connection with id", socket.id);
-  socket.on("roomcreate", (name: string) => {
-    console.log(`Attempt to create room with name ${name} from ${socket.id}`);
-    if (rooms.some((room) => room.name === name)) {
-      socket.emit("room-err", "Room name already exists");
-      return;
-    }
-    rooms.push({ name: name });
-    socket.join(name);
-    socket.emit("roomjoined", name);
-  });
   socket.on("roomjoin", (name: string) => {
     console.log(`Attempt to join room with name ${name} from ${socket.id}`);
     if (rooms.some((room) => room.name === name)) {
       socket.join(name);
       socket.emit("roomjoined", name);
-    } else socket.emit("room-err", "Room does not exist");
+    } else {
+      rooms.push({ name: name });
+      socket.join(name);
+      socket.emit("roomjoined", name);
+    }
   });
   socket.on("message", (room: string, message: string) => {
     console.log("Received message", message);
