@@ -10,6 +10,9 @@
     "concurrently": "^5.3.0"
   },
   "scripts": {
+    "install": "cd server && npm install && cd ..",
+    "build": "cd server && tsc --build && cd ..",
+    "start": "cd server && node dist/index.js",
     "fullbuild:ntru": "cd ntru && yarn && yarn build && cd ..",
     "fullbuild:server": "cd server && yarn && yarn build && cd ..",
     "fullbuild:app": "cd app && yarn && yarn build && cd ..",
