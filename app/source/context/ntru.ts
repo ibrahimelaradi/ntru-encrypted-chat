@@ -1,5 +1,5 @@
 import { decrypt, encrypt, generateKey } from "ntru";
-import { Context } from "./provider";
+import { Context, Params } from "./provider";
 // import { f, g, q } from "./params.json";
 import { useContext } from "react";
 
@@ -24,4 +24,12 @@ export function useDecrypt(): (cipher: string, fromChars?: boolean) => string {
 		const decryptedArray = numArray.map((num) => decrypt(num, q, f, g));
 		return decryptedArray.map((num) => String.fromCharCode(num)).join("");
 	};
+}
+
+export function useEndpoint(): string {
+	return useContext(Context).endpoint;
+}
+
+export function useAppContext(): Params {
+	return useContext(Context);
 }

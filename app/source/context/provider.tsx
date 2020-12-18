@@ -1,74 +1,85 @@
 import React, { createContext, FC, useEffect, useState } from "react";
-import { readFile, stat, writeFile } from "fs";
-import { promisify } from "util";
+import { readFileSync, statSync, writeFileSync } from "fs";
 import { safeDump, safeLoad } from "js-yaml";
 import { resolve } from "path";
-import { f as devF, g as devG, q as devQ } from "./params.json";
 
 const prefsPath = resolve(process.cwd(), "prefs.yaml");
 
-const readFileAsync = promisify(readFile);
-const statAsync = promisify(stat);
-const writeFileAsync = promisify(writeFile);
-
-type Params = {
+export type Params = {
 	f: number;
 	g: number;
 	q: number;
+	endpoint: string;
+	initializing: boolean;
 };
 
 export const Context = createContext<Params>({
 	q: 59536,
 	f: 83,
 	g: 156,
+	endpoint: "http://localhsot:3000",
+	initializing: true,
 });
 
 export const NTRUProvider: FC = ({ children }) => {
-	const [params, setParams] = useState<Params>({
+	const [params, setParams] = useState<Omit<Params, "initializing">>({
 		q: 59536,
 		f: 83,
 		g: 156,
+		endpoint: "http://localhsot:3000",
 	});
+	const [initializing, setInitializing] = useState(true);
 
-	async function readParamsAsync() {
+	function readParams() {
+		setInitializing(true);
 		try {
-			const status = await statAsync(prefsPath);
+			const status = statSync(prefsPath);
 			if (status.isFile()) {
 				console.log("Found prefs.yaml");
-				const content = (await readFileAsync(prefsPath)).toString();
+				const content = readFileSync(prefsPath).toString();
 				const prefs: string | object | undefined = safeLoad(content);
 				if (!prefs) {
 					console.log("Faild to load prefs.yaml content");
+					setInitializing(false);
 					return;
 				}
 				if (typeof prefs === "string") {
 					console.log("Faild to load prefs.yaml content");
+					setInitializing(false);
 					return;
 				}
 				if (typeof prefs === "object") {
 					if (
 						Object.prototype.hasOwnProperty.call(prefs, "f") &&
 						Object.prototype.hasOwnProperty.call(prefs, "q") &&
+						Object.prototype.hasOwnProperty.call(prefs, "endpoint") &&
 						Object.prototype.hasOwnProperty.call(prefs, "g")
 					) {
-						const parsedPrefs = prefs as { q: number; g: number; f: number };
-						setParams({ f: parsedPrefs.f, g: parsedPrefs.g, q: parsedPrefs.q });
+						const parsedPrefs = prefs as Omit<Params, "initializing">;
+						setParams(parsedPrefs);
+						setInitializing(false);
 					} else {
 						console.log("Currupted prefs.yaml file!");
+						setInitializing(false);
 						return;
 					}
 				}
 			}
 		} catch (err) {
 			console.log("No prefs.yaml file found, creating..");
-			const prefs = { f: devF, g: devG, q: devQ };
+			const prefs: Omit<Params, "initializing"> = params;
 			const content = safeDump(prefs);
-			await writeFileAsync(prefsPath, content);
+			writeFileSync(prefsPath, content);
+			setInitializing(false);
 		}
 	}
 
 	useEffect(() => {
-		readParamsAsync();
+		readParams();
 	}, []);
-	return <Context.Provider value={params}>{children}</Context.Provider>;
+	return (
+		<Context.Provider value={{ ...params, initializing }}>
+			{children}
+		</Context.Provider>
+	);
 };

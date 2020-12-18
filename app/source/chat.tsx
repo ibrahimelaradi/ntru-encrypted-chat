@@ -3,7 +3,7 @@ import { Text, Box } from "ink";
 import TextInput from "ink-text-input";
 import Message from "./message";
 import { useEmitter, useEvent } from "./socket";
-import { useDecrypt, useEncrypt } from "./cypher/ntru";
+import { useDecrypt, useEncrypt } from "./context/ntru";
 
 const useChars = true;
 

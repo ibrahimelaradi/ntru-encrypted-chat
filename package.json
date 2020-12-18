@@ -10,7 +10,17 @@
     "concurrently": "^5.3.0"
   },
   "scripts": {
-    "build:server": "cd server && yarn && yarn build",
-    "build:app": "cd app && yarn && yarn build"
+    "fullbuild:ntru": "cd ntru && yarn && yarn build && cd ..",
+    "fullbuild:server": "cd server && yarn && yarn build && cd ..",
+    "fullbuild:app": "cd app && yarn && yarn build && cd ..",
+    "fullbuildall": "yarn fullbuild:ntru && yarn fullbuild:server && yarn fullbuild:app",
+    "build:ntru": "cd ntru && yarn build && cd ..",
+    "build:server": "cd server && yarn build && cd ..",
+    "build:app": "cd app && yarn build && cd ..",
+    "buildall": "yarn build:ntru && build:server && yarn build:app",
+    "start:server": "cd server && yarn build && yarn start",
+    "start:app": "cd app && yarn start",
+    "clean": "rm -rf app/dist && rm -rf ntru/dist && rm -rf server/dist",
+    "fullclean": "yarn clean && rm -rf node_modules && rm -rf app/node_modules && rm -rf server/node_modules && rm -rf ntru/node_modules"
   }
 }

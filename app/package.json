@@ -7,10 +7,8 @@
 		"node": ">=10"
 	},
 	"scripts": {
-		"build": "SET NODE_ENV=production tsc --build",
-		"build-dev": "SET NODE_ENV=development tsc --build",
-		"start-dev": "yarn build-dev && node dist/cli.js",
-		"start-prod": "yarn build && node dist/cli.js",
+		"build": "tsc --build",
+		"start": "tsc --build && node dist/cli.js",
 		"pretest": "yarn build",
 		"test": "xo && ava"
 	},

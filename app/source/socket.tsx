@@ -7,8 +7,9 @@ import React, {
 	useState,
 } from "react";
 import { Socket, io } from "socket.io-client";
+import { useEndpoint } from "./context/ntru";
 
-const socket = io("http://localhost:3000", { path: "/chat" });
+const initialSocket = io("http://localhost:3000", { path: "/chat" });
 
 type SocketContext = {
 	socket: Socket;
@@ -18,24 +19,27 @@ type SocketContext = {
 };
 
 const initialContext: SocketContext = {
-	socket,
+	socket: initialSocket,
 	setRoom: () => {},
 };
 
 const Context = createContext<SocketContext>(initialContext);
 
 const Provider: FC = ({ children }) => {
+	const endpoint = useEndpoint();
 	const [id, setId] = useState<string>();
+	const [socket] = useState<Socket>(io(endpoint, { path: "/chat" }));
 	const [room, setRoom] = useState<string>();
 	useEffect(() => {
-		initialContext.socket.connect();
-		initialContext.socket.on("connected", (id: string) => {
+		console.log(endpoint);
+		socket.connect();
+		socket.on("connected", (id: string) => {
 			setId(id);
-			initialContext.socket.off("connected");
+			socket.off("connected");
 		});
-	}, []);
+	}, [endpoint]);
 	return (
-		<Context.Provider value={{ ...initialContext, id, room, setRoom }}>
+		<Context.Provider value={{ ...initialContext, socket, id, room, setRoom }}>
 			{children}
 		</Context.Provider>
 	);
